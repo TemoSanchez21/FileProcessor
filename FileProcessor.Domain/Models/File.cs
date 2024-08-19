@@ -10,6 +10,6 @@ public class File
     
     public string ProviderPassword = string.Empty;
 
-    public DateOnly CreatedAt { get; set; }
-    public DateOnly UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

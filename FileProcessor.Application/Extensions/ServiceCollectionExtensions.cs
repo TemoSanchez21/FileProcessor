@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace FileProcessor.Application.Extensions;
 
@@ -10,7 +9,6 @@ public static class ServiceCollectionExtensions
         var applicationAssembly = typeof(ServiceCollectionExtensions).Assembly;
 
         services.AddMediatR(config => config.RegisterServicesFromAssembly(applicationAssembly));
-        
 
     }
 }

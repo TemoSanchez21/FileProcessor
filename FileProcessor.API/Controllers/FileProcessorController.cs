@@ -17,7 +17,6 @@ public class FileProcessorController (IMediator mediator) : ControllerBase
         var command = new UploadCompressedFolderCommand
         {
             ClientName = clientName,
-            FolderPassword = passFile,
             CompressedFileBytes = memoryStream.ToArray()
         };
 

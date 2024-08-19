@@ -28,6 +28,12 @@ public class ErrorHandlingMiddle(ILogger<ErrorHandlingMiddle> logger) : IMiddlew
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             await context.Response.WriteAsync(ex.Message);
         }
+        catch(UploadFileException ex)
+        {
+            logger.LogError(ex.Message);
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsync(ex.Message);
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, ex.Message);

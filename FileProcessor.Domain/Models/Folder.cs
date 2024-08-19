@@ -9,6 +9,6 @@ public class Folder
 
     public List<File> Files { get; set; } = new List<File>();
 
-    public DateOnly CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
