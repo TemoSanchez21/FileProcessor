@@ -6,6 +6,7 @@ using FileProcessor.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Resend;
 
 namespace FileProcessor.Infrastructure.Extensions;
 
@@ -15,8 +16,7 @@ public static class ServiceCollectionExtensions
     {
         var dbConnectionString = configuration.GetConnectionString("FileProcessorDb");
 
-        services.AddDbContext<GlobalDbContext>(options => options.UseNpgsql(dbConnectionString));
-
+        services.AddDbContext<GlobalDbContext>(options => options.UseNpgsql(dbConnectionString), ServiceLifetime.Scoped);
 
         // Add repositories
         services.AddScoped<IFileRepository, FileRepository>();
@@ -24,5 +24,17 @@ public static class ServiceCollectionExtensions
 
         // Add services
         services.AddScoped<IFileTransferService, FluentFTPTransferService>();
+        services.AddScoped<INotificationEmailService, ResendNotificationEmailService>();
+
+        // Add depedencies
+        services.AddHttpClient<ResendClient>();
+        services.Configure<ResendClientOptions>(options =>
+        {
+            options.ApiToken = configuration.GetValue<string>("Resend:ApiKey") ?? string.Empty;
+        });
+
+        services.AddMemoryCache();
+
+        services.AddScoped<IResend,  ResendClient>();
     }
 }

@@ -4,5 +4,6 @@ namespace FileProcessor.Domain.Services;
 
 public interface IFileTransferService
 {
-    public Task<bool> TransferFile(Stream file, string fileName);
+    public Task<bool> TransferFileAsync(Stream file, string fileName);
+    public Task<Stream> DownloadFileAsync(string remotePath);
 }

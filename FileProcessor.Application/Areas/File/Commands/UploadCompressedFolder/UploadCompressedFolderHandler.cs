@@ -45,15 +45,17 @@ public class UploadCompressedFolderHandler(
             using var fileStream = new MemoryStream(fileBytes);
 
             logger.LogInformation("Uploading file {FileName} to FTP provider", entry.Key);
-            var isSucceded = await fileTransferService.TransferFile(fileStream, entry.Key ?? "Placeholder");
+            var isSucceded = await fileTransferService.TransferFileAsync(fileStream, entry.Key ?? "Placeholder");
 
             if (isSucceded)
             {
                 var fileRecord = new FileModel
                 {
                     Id= Guid.NewGuid(),
-                    FileName = entry.Key ?? "PruebaNombre",
+                    FileName = entry.Key!.Split("/")[1],
                     Folder = folder,
+                    ProviderPassword = "Password",
+                    RemotePath = $"/{entry.Key}" ?? "Placeholder",
                     CreatedAt = DateTime.Now.ToUniversalTime(),
                     UpdatedAt = DateTime.Now.ToUniversalTime(),
                 };

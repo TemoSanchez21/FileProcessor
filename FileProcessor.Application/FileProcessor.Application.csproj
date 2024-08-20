@@ -16,8 +16,4 @@
     <ProjectReference Include="..\FileProcessor.Domain\FileProcessor.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\File\Queries\" />
-  </ItemGroup>
-
 </Project>

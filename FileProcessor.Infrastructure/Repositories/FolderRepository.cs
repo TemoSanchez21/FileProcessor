@@ -8,8 +8,10 @@ internal class FolderRepository(GlobalDbContext dbContext) : IFolderRepository
 {
     public async Task<Guid> SaveFolderAsync(Folder folder)
     {
+    
         await dbContext.Folders.AddAsync(folder);
         await dbContext.SaveChangesAsync();
+    
         return folder.Id;
     }
 }

@@ -1,0 +1,41 @@
+services:
+  web:
+    image: yourproject-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__FileProcessorDb=Server=db; User Id=postgres; Password=Dona21; Port=5432; Database=ProcessorFile;
+      - FtpSettings__FtpUrl=ftp
+      - FtpSettings__FtpPort=21
+      - FtpSettings__FtpUsername=ProcessorFile
+      - FtpSettings__FtpPassword=Dona21
+      - Resend__Apikey=re_FCGNitjq_NiepnMGDSCS2MV53ptc8Seb4
+    depends_on:
+      - db
+      - ftp
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Dona21
+      POSTGRES_DB: ProcessorFile
+    ports:
+      - "5432:5432"
+
+  ftp:
+    image: stilliard/pure-ftpd:hardened
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    environment:
+      PUBLICHOST: "localhost"
+      FTP_USER_NAME: "ProcessorFile"
+      FTP_USER_PASS: "Dona21"
+      FTP_USER_HOME: "/home/ftpusers/ProcessorFile"
+    volumes:
+      - "./ftpdata:/home/ftpusers/ProcessorFile"

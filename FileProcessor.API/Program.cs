@@ -1,3 +1,4 @@
+using dotenv.net;
 using FileProcessor.API.Middlewares;
 using FileProcessor.Application.Extensions;
 using FileProcessor.Infrastructure.Extensions;
@@ -5,6 +6,8 @@ using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+DotEnv.Load();
 
 // Add services to the container.
 
@@ -20,6 +23,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Host.UseSerilog((context, configuration) => 
     configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Configuration.AddJsonFile("appsettings.Development.json");
+builder.Configuration.AddEnvironmentVariables();
 
 var app = builder.Build();
 
