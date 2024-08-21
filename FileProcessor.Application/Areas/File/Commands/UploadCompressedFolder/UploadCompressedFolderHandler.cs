@@ -18,12 +18,11 @@ public class UploadCompressedFolderHandler(
 {
     public async Task<Guid> Handle(UploadCompressedFolderCommand command, CancellationToken cancellationToken)
     {
-        if (command.CompressedFileBytes == null || command.CompressedFileBytes.Length == 0)
+        if (command.CompressedFileStream == null)
             throw new NotFolderException("The folder was not provided");
 
-
         logger.LogInformation("Decompressing file for client {ClientName}", command.ClientName);
-        var tarBytes = DecompressGzip(command.CompressedFileBytes);
+        var tarBytes = DecompressGzip(command.CompressedFileStream);
 
         using var tarStream = new MemoryStream(tarBytes);
         using var archive = TarArchive.Open(tarStream);
@@ -51,8 +50,8 @@ public class UploadCompressedFolderHandler(
             {
                 var fileRecord = new FileModel
                 {
-                    Id= Guid.NewGuid(),
-                    FileName = entry.Key!.Split("/")[1],
+                    Id = Guid.NewGuid(),
+                    FileName = entry.Key!.Split("/").Last(),
                     Folder = folder,
                     ProviderPassword = "Password",
                     RemotePath = $"/{entry.Key}" ?? "Placeholder",
@@ -60,28 +59,28 @@ public class UploadCompressedFolderHandler(
                     UpdatedAt = DateTime.Now.ToUniversalTime(),
                 };
 
-                logger.LogInformation("Upload successfull, saving entity for {FileName} in database", entry.Key);
+                logger.LogInformation("Upload successful, saving entity for {FileName} in database", entry.Key);
                 await fileRepository.SaveFileAsync(fileRecord);
             }
             else
             {
-                throw new UploadFileException("Something went wrong file uploading the file");
+                throw new UploadFileException("Something went wrong while uploading the file");
             }
         }
 
         return folder.Id;
     }
 
-    private static byte[] ConvertStreamToByteArray(Stream stream) {
+    private static byte[] ConvertStreamToByteArray(Stream stream)
+    {
         using var memoryStream = new MemoryStream();
         stream.CopyTo(memoryStream);
         return memoryStream.ToArray();
     }
 
-    private static byte[] DecompressGzip(byte[] compressedBytes)
+    private static byte[] DecompressGzip(Stream compressedStream)
     {
-        using var inputStream = new MemoryStream(compressedBytes);
-        using var gzipStream = new GZipStream(inputStream, CompressionMode.Decompress);
+        using var gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
         using var outputStream = new MemoryStream();
 
         gzipStream.CopyTo(outputStream);

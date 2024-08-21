@@ -11,7 +11,7 @@ public class ResendNotificationEmailService(IResend resend) : INotificationEmail
     public async Task<bool> SendNotificationAsync(string email)
     {
         var message = new EmailMessage();
-        message.From = "hola@anaydeli.com";
+        message.From = "Revision De Documentos <revision@anaydeli.com>";
         message.To.Add(email);
         message.Subject = "Notificacion de revision de documentos";
         message.HtmlBody = File.ReadAllText(htmlTemplatePath);

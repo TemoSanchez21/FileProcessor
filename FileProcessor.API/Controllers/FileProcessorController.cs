@@ -12,17 +12,7 @@ public class FileProcessorController (IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> UploadCompressedFolder(IFormFile file, string clientName)
     {
-        using var memoryStream = new MemoryStream();
-        file.CopyTo(memoryStream);
-
-        var command = new UploadCompressedFolderCommand
-        {
-            ClientName = clientName,
-            CompressedFileBytes = memoryStream.ToArray()
-        };
-
-        var folderId = await mediator.Send(command);
-        
+        var folderId = await mediator.Send(new UploadCompressedFolderCommand { ClientName = clientName, CompressedFileStream = file.OpenReadStream()});   
         return Ok(folderId);
     }
 
